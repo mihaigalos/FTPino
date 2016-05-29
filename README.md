@@ -25,13 +25,30 @@ Unfortunately, I couldn't find a one that directly fits the Photon, but the Polo
 The SPI pins directly overlap those of the Photon. Only problem was with the GND and VDD pins which couldn't be directly connected.
 ![alt tag](Doc/FTPino_SDHolder1.jpg?raw=true "FTPino_SDHolder1")
 
-My proposed solution consists of soldering the GND of the next pin and cutting it so it doesn't go ito the Photon's pin headers.
+My proposed solution consists of soldering the GND of the next pin and cutting it so it doesn't go into the Photon's pin headers.
 As for the VDD, an airwire was needed.
 ![alt tag](Doc/FTPino_SDHolder2.jpg?raw=true "FTPino_SDHolder2")
 
 #Speed
 PC <- Read  <- FTPino : 500 kB/s
+
 PC -> Write -> FTPino : 300 kB/s
+
+#PC Client
+If you choose to interact with FTPino from a PC, I would reccomend using FTPRush (http://www.wftpserver.com/download.htm)
+Other clients I've used are FileZilla and FreeCommander, although with those, you can only read from the remote SDCard.
+
+PC clients interact with FTPino in FTP Active mode.
+
+In respect to FTPRush, you must configure your client to use a single socket for data. In v2.1.8 this can be found under Options -> Transfer -> Single connection mode (must be checked).
+
+I've had a bittersweet experience trying to validate FTPino with FileZilla. Most operations work if one respects the prerequisite of setting a single data socket. All except the Store command.
+This is responsible for sending data to FTPino for it to be written to the SD. 
+
+FTP Active mode just doesn't work. In Passive mode, the data is sent, received and written to the SD as you would expect. Except the last coouple of kB.
+
+My only explanation as to what is happening is that FileZilla writes to FTPino's buffer without checking if the buffer is full ? and closes the connection, before the client has had a chance to 
+read the whole file.. ?
 
 # Code requirements
 FTPino was tested only on Particle's Photon only. The linker output is presented below (server-only version, for client version flash usage is 1kB higher).
@@ -45,3 +62,6 @@ In a nutshell:
 Flash used	37948 / 110592	34.3 %
 RAM used	1388 / 20480	6.8 %
 ```
+
+# License
+This software is freely available under the GNU GPL v3.0 aegis, please consult the LICENSE file for further information.
