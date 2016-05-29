@@ -30,12 +30,13 @@ As for the VDD, an airwire was needed.
 ![alt tag](Doc/FTPino_SDHolder2.jpg?raw=true "FTPino_SDHolder2")
 
 #Speed
+```
 PC <- Read  <- FTPino : 500 kB/s
-
 PC -> Write -> FTPino : 300 kB/s
+```
 
-#PC Client
-If you choose to interact with FTPino from a PC, I would reccomend using FTPRush (http://www.wftpserver.com/download.htm)
+#FTP Client (PC)
+If you choose to interact with FTPino from a PC, I would reccomend using FTPRush FTP client (http://www.wftpserver.com/download.htm)
 Other clients I've used are FileZilla and FreeCommander, although with those, you can only read from the remote SDCard.
 
 PC clients interact with FTPino in FTP Active mode.
