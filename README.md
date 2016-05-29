@@ -1,6 +1,6 @@
 # FTPino
 A tiny FTP Server and Client for your Photon / Arduino projects.
-![alt tag](Doc/FTPino_FTPServer.jpg?raw=true "FTPino")
+![alt tag](doc/FTPino_FTPServer.jpg?raw=true "FTPino")
 
 #Description
 FTPino is a lightweight FTPServer and/or client for logging, storing or fetching your data.
@@ -23,11 +23,11 @@ If you scout the web a bit for a decent SDCard breakout board, you'll find most 
 Unfortunately, I couldn't find a one that directly fits the Photon, but the Pololu cut it pretty close.
 
 The SPI pins directly overlap those of the Photon. Only problem was with the GND and VDD pins which couldn't be directly connected.
-![alt tag](Doc/FTPino_SDHolder1.jpg?raw=true "FTPino_SDHolder1")
+![alt tag](doc/FTPino_SDHolder1.jpg?raw=true "FTPino_SDHolder1")
 
 My proposed solution consists of soldering the GND of the next pin and cutting it so it doesn't go into the Photon's pin headers.
 As for the VDD, an airwire was needed.
-![alt tag](Doc/FTPino_SDHolder2.jpg?raw=true "FTPino_SDHolder2")
+![alt tag](doc/FTPino_SDHolder2.jpg?raw=true "FTPino_SDHolder2")
 
 #Speed
 ```
