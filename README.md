@@ -1,6 +1,6 @@
 # FTPino
 A tiny FTP Server and Client for your Photon / Arduino projects.
-[Read more words!](Doc/FTPino_FTPServer.jpg)
+![alt tag](Doc/FTPino_FTPServer.jpg?raw=true "FTPino")
 
 #Description
 FTPino is a lightweight FTPServer and/or client for logging, storing or fetching your data.
