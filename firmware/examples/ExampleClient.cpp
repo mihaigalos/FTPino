@@ -1,7 +1,7 @@
 // This #include statement was automatically added by the Particle IDE.
-#include "FTPClient.h"
+#include "FTPino/FTPClient.h"
 
-#include "FTPClient.h"
+#include "FTPino/FTPClient.h"
 #define FTPWRITE
 
 String ftpAddress   = "192.168.0.102";

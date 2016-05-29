@@ -20,15 +20,15 @@
 // This #include statement was automatically added by the Particle IDE.
 #include "SdFat/SdFat.h"
 
-#include "Buzz.h"
+#include "FTPino/Buzz.h"
 
 // This #include statement was automatically added by the Particle IDE.
-#include "FileHandler.h"
+#include "FTPino/FileHandler.h"
 
 // This #include statement was automatically added by the Particle IDE.
-#include "FTPServer.h"
+#include "FTPino/FTPServer.h"
 
-#include "FTPClient.h"
+#include "FTPino/FTPClient.h"
 
 
 #define TIMEZONE (+2)
