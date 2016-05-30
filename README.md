@@ -1,4 +1,4 @@
-# FTPino [![license](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE) [![bitHound](https://img.shields.io/bithound/dependencies/github/rexxars/sse-channel.svg?maxAge=2592000)](https://github.com/greiman/SdFat-Particle)
+# FTPino [![license](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE)
 A tiny FTP Server and Client for your Photon / Arduino projects.
 ![alt tag](doc/FTPino_FTPServer.jpg?raw=true "FTPino")
 
