@@ -2,6 +2,6 @@
   "name": "FTPino",
   "author": "Mihai Galos <mihaigalos@yahoo.com>",
   "license": "GPL v3",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A tiny FTP Server and Client for your Photon / Arduino projects."
 }
