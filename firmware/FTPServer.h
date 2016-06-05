@@ -53,7 +53,7 @@ typedef enum{
 	TEftpState_AuthFail,		TEftpState_CurrentDir,		TEftpState_List,			TEftpState_System,		TEftpState_Features,
 	TEftpState_Type,			TEftpState_ChangeDir,		TEftpState_Passive,		 	TEftpState_RetrieveFile,TEftpState_Store,
 	TEftpState_Append,			TEftpState_DeleteFile,		TEftpState_DeleteDir,       TEftpState_RestartAt,   TEftpState_Port,        
-	TEftpState_ParentDir,       TEftpState_MakeDir,         TEftpState_RenameFrom,      TEftpState_RenameTo,
+	TEftpState_ParentDir,       TEftpState_MakeDir,         TEftpState_RenameFrom,      TEftpState_RenameTo,    TEftpState_Client,
 	TEftpState_Quit
 }TEftpState;
 
@@ -73,6 +73,8 @@ class FTPServer{
 	TCPServer* server=NULL, *dserver=NULL;
 	TCPClient client, dclient;   // client control/data socket for mitigating the connection, credentials, etc / sending and receiving data
     IPAddress remoteIp;
+    
+    bool isFTPinoClient;
     int16_t timeoutSec; uint32_t aliveTimer;
 
 	const int passiveDataPortHi = 4, passiveDataPortLo = 0;
@@ -87,7 +89,8 @@ class FTPServer{
 	String  dataRead    ();   // low-level read
 	void	dataWrite   (String data);
 	void    readFile    (String file);
-	void    writeFile   (String file, IFileHandler* fh);
+	void    writeFile   (String file, IFileHandler* fh, bool isAppend = false);
+	
 public:
 	
 	FTPServer(String & user, String &pass, uint16_t _port = 21, int16_t _timeoutSec=-1 ); 

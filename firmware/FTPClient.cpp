@@ -20,55 +20,52 @@
 #ifdef CLIENT_ACTIVE
 #include "FTPClient.h"
 
-char FTPClient::readServerResponse()
+char FTPClient::readServerResponse(char* outBuf)
 {
-    char respCode;
-    char thischar;
+    auto result = 1; char thischar;
+    memset(outBuf,0, sizeof(outBuf));
+    uint8_t outCount;
+    if(!client.connected())  {Particle.publish("No client connected!"); result = 0; }
     
     while(!client.available()) Particle.process(); // run main loop while waiting for client
-    respCode = client.peek();
-    outCount = 0;
-    
-    while(client.available())
-    {  
-        thischar = client.read();    
-        
-        if(outCount < 127)
-        {
-          outBuf[outCount] = thischar;
-          outCount++;      
-          outBuf[outCount] = 0;
+    outCount = 0; unsigned long maxInterations = 10000;
+    do{
+        while(client.available())
+        {  
+            thischar = client.read();    
+            
+            if(outCount < 127)
+            {
+              outBuf[outCount] = thischar;
+              outCount++;      
+              outBuf[outCount] = 0;
+            }
         }
-    }
+        
+    } while ( (outCount < 3) && (--maxInterations>0)); // at least 3 characters represending a FTF code have been received
+    client.flush();
     
-    Particle.publish("Response: "+String(respCode),"Payload: "+String(outBuf));
-    delay(1000);
-    if(respCode >= '4')
-    {
-        onFail();
-        return 0;  
-    }
-    
-    return 1;
+    return result;           // ok 
 }
     
 String FTPClient::send(String &stringToWrite, String &remoteFile, TE_FTPClient_WriteMode writeMode){
-    
+        char outBuf[128];
         client.connect(server,21);
+        int maxInterations = 10000; while(  (client.connected()) &&  (--maxInterations >0)  );
+        
         if (!client.connected())  return "Error, cannot connect to FTP.";
         
         
-        if(!readServerResponse()) return "Error when connecting to FTP Server.";
+        if(!readServerResponse(outBuf)) return "Error when connecting to FTP Server.";
         
-        
-        client.println("USER "+username);       if(!readServerResponse()) return "Error when sending USER (credential username).";
-        client.println("PASS "+password);       if(!readServerResponse()) return "Error when sening PASS (credential password).";
-        client.println("SYST");                 if(!readServerResponse()) return "Error when sending SYST.";
-        client.println("TYPE I");               if(!readServerResponse()) return "Error when sending Type I.";
-        
-        client.println("PASV");                 if(!readServerResponse()) return "Error when sending PASV.";
-        
+        client.println("CLIENT FTPino");       if(!readServerResponse(outBuf)) return "Error when sending USER (credential username).";
+        client.println("USER "+username);       if(!readServerResponse(outBuf)) return "Error when sending USER (credential username).";
+        client.println("PASS "+password);       if(!readServerResponse(outBuf)) return "Error when sening PASS (credential password).";
+        client.println("SYST");                 if(!readServerResponse(outBuf)) return "Error when sending SYST.";
+        client.println("TYPE I");               if(!readServerResponse(outBuf)) return "Error when sending Type I.";
+        client.println("PASV");                 if(!readServerResponse(outBuf)) return "Error when sending PASV.";
         char *tStr = strtok(outBuf,"(,"); // tokenizing response of server, getting ports for data transfer 
+       
         int array_pasv[6];
         for ( int i = 0; i < 6; i++) {
             tStr = strtok(NULL,"(,");
@@ -93,29 +90,26 @@ String FTPClient::send(String &stringToWrite, String &remoteFile, TE_FTPClient_W
             
         }
         
-        client.print(writeModeCommand+" ");
-        client.println(remoteFile);   
-        if(!readServerResponse())  { dclient.stop(); return "Error when sending "+writeModeCommand+"."; }
-        
-        
-        
+        client.println(writeModeCommand+" "+remoteFile);   
+        if(!readServerResponse(outBuf))  { dclient.stop(); return "Error when sending "+writeModeCommand+"."; }
         
         char clientBuf[64]; uint32_t clientCount = 0, posInOutString =0;
         do
         {
             clientBuf[clientCount++] = stringToWrite[posInOutString++];
             
-            if(clientCount > 63)
-            {
-              dclient.write(reinterpret_cast<const uint8_t*>(clientBuf),64);
+            if(clientCount >= sizeof(clientBuf)){
+              dclient.write(reinterpret_cast<const uint8_t*>(clientBuf),sizeof(clientBuf));
               clientCount = 0;
+              
+              delay(100); // give the server a chance to interpret the data. Only necessary if server is FTPino
             }
         }while(posInOutString < stringToWrite.length());
         
-        if(clientCount > 0) dclient.write(reinterpret_cast<const uint8_t*>(clientBuf),clientCount); // finish off wriring what's left in the buffer
+        if(clientCount > 0) dclient.write(reinterpret_cast<const uint8_t*>(clientBuf),clientCount); delay(100); // finish off wriring what's left in the buffer
         
-        dclient.stop();         if(!readServerResponse()) return "Error when stopping client.";
-        client.println("QUIT"); if(!readServerResponse()) return "Error when sending QUIT to server.";
+        dclient.stop();         if(!readServerResponse(outBuf)) return "Error when stopping client.";
+        client.println("QUIT"); if(!readServerResponse(outBuf)) return "Error when sending QUIT to server.";
         client.stop();
         
         return "FTP Success.";

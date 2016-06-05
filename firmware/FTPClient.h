@@ -33,15 +33,13 @@ class FTPClient{
     
     TCPClient client;   // client for mitigating the connection, credentials, etc
     TCPClient dclient;  // client for handling the datastream
-    
-    char outBuf[128];
-    uint8_t outCount;
+   
 public:
     FTPClient(String &_server, String &_username, String &_password){
         server = _server; username = _username; password = _password;
     }    
     
-    char readServerResponse();
+    char readServerResponse(char* outBuf);
     String send(String &stringToWrite, String &remoteFile, TE_FTPClient_WriteMode writeMode=TE_FTPClient_WriteMode_Append);
     void onFail();
     

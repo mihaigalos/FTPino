@@ -100,6 +100,8 @@ TEftpState FTPServer::parseCommand(String response, String &info){
 	else if(response.startsWith("PASV"))	newState = TEftpState_Passive;			else if(response.startsWith("LIST"))		    newState = TEftpState_List;
 	else if(response.startsWith("TYPE"))	newState = TEftpState_Type;         	else if(response.startsWith("CDUP"))            newState = TEftpState_ParentDir;
 	
+	else if(response.startsWith("CLIENT"))  newState = TEftpState_Client,       info = response.substring(String("CLIENT ").length(), posEnd);
+	
 	else if(response.startsWith("REST"))    newState = TEftpState_RestartAt,    info = response.substring(String("REST ").length(), posEnd);
 	else if(response.startsWith("RETR"))	newState = TEftpState_RetrieveFile, info = response.substring(String("RETR ").length(), posEnd);
 	else if(response.startsWith("DELE"))	newState = TEftpState_DeleteFile,   info = response.substring(String("DELE ").length(), posEnd);
@@ -126,9 +128,13 @@ void FTPServer::waitForClientDataConnection(){
 }
 
 String FTPServer::dataRead(){
-	char inBuffer[1024]; memset(inBuffer, 0, sizeof(inBuffer)); uint8_t pos =0 ;
-	while (client.available())	inBuffer[pos++]= client.read();
-	return String(inBuffer);
+	char inBuffer[1024]; memset(inBuffer, 0, sizeof(inBuffer)); uint8_t pos =0 ; String result; int maxIterations = 100; // mechanism for clients which fill the client buffer slow, like another Particle
+	do{
+	    while (client.available())	inBuffer[pos++]= client.read();
+	    result = String(inBuffer).replace("\r\n",""); // strip newlines if any 
+	    Particle.process();
+	}while(isFTPinoClient && (--maxIterations >0) ); // wait for a slow client if necessary
+	return result;
 }
 
 void FTPServer::dataWrite(String data){
@@ -160,20 +166,25 @@ void FTPServer::readFile(String file){
     server->println("226 Transfer complete. "+String(totalBytes)+" read."); 
 }
 
-void FTPServer::writeFile(String file, IFileHandler* fh){ 
+void FTPServer::writeFile(String file, IFileHandler* fh, bool isAppend){ 
     server->println("150 Opening BINARY mode data connection for file transfer.");
-    
+    int maxIterations = 1000; // mechanism for clients which fill the client buffer slow, like another Particle
 	uint32_t pos =0; auto totalBytes = 0; uint8_t readBuffer[256]; 
+	
 	if(!dclient.connected()) {server->println("425 No data connection"); return; }
 	else{
          auto bytesRead =0;
          do{
             bytesRead = dclient.read(readBuffer, sizeof(readBuffer));
             if(bytesRead>0){
-                fh->writeFile(file, reinterpret_cast<char*>(readBuffer), bytesRead);
+                maxIterations = 1000;
+                fh->writeFile(file, reinterpret_cast<char*>(readBuffer), bytesRead, isAppend);
                 totalBytes+= bytesRead, bytesRead = 0; 
             }
-        }while( dclient.connected() || dclient.available());
+        }while( 
+                ( dclient.connected() || dclient.available()) ||
+                (isFTPinoClient && (--maxIterations >0) )
+              );
 	} 
 	dclient.stop();dclient.flush();
     fh->flush();
@@ -192,7 +203,7 @@ String FTPServer::run(){
 		#endif
 		digitalWrite(D7,HIGH);
 		String clientResponse, parseInfo;			
-		
+		isFTPinoClient = false;
 		if(timeoutSec>0)    aliveTimer = millis() + timeoutSec*1000;
 	    else                aliveTimer = -1; 
 		
@@ -207,7 +218,7 @@ String FTPServer::run(){
 					case TEftpState_CurrentDir:     server->println("257 \"/\" is current directory.");							                    break;
 					case TEftpState_System:         server->println("215 UNIX emulated by FTPino.");								                break;
 					case TEftpState_Features:       server->println("211 Extensions supported SIZE MDTM XCRC.");					                break;
-					case TEftpState_Type:           server->println("200 Type set to BINARY.");    	                                                break;
+					case TEftpState_Type:           server->println("200 Type set to BINARY.");                                                     break;
 					
 					case TEftpState_RestartAt:      server->println("350 Restarting at "+parseInfo+". !!! Not implemented");                        break;
 					case TEftpState_Store:          writeFile(parseInfo, fh);                                                                       break;
@@ -216,7 +227,10 @@ String FTPServer::run(){
 					case TEftpState_DeleteFile:     if(fh->deleteTarget(parseInfo,false)<0) server->println("550 Can't delete File.");     
 					                                else server->println("250 File "+parseInfo+" was deleted.");                                    break;
 					case TEftpState_MakeDir:        if(fh->makeDir(parseInfo)<0) server->println("550 Can't create directory."); 
-					                                else server->println("257 Directory created : "+parseInfo+".");                                 break;                                                             
+					                                else server->println("257 Directory created : "+parseInfo+".");                                 break;
+					                                
+					case TEftpState_Append:			writeFile(parseInfo, fh, true);                                                                 break;                                
+				    case TEftpState_Client:         if(parseInfo.startsWith("FTPino")) isFTPinoClient = true;                                       break;
 					                                
 					case TEftpState_RenameFrom:     fh->renameFrom(parseInfo); server->println("350 Directory exists, ready for destination name"); break;
 					case TEftpState_RenameTo:       fh->renameTo(parseInfo);   server->println("250 Directory renamed successfully");               break;
@@ -232,6 +246,7 @@ String FTPServer::run(){
 					case TEftpState_Passive: {
 						auto ip = WiFi.localIP(); char buffer [1024]; 
 						sprintf(buffer,"(%d,%d,%d,%d,"+String(passiveDataPortHi)+ ","+String(passiveDataPortLo)+")",ip[0],ip[1],ip[2],ip[3]);
+						
 						server->println("227 Entering Passive Mode "+String(buffer));											
 						waitForClientDataConnection();
 						transferMode = TEftpTransferMode_Passive;
@@ -243,9 +258,7 @@ String FTPServer::run(){
 					    break;
 					}
 					
-					case TEftpState_Append:{
-						break;
-					}
+					
 					
 				}
 				
