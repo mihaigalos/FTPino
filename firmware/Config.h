@@ -25,4 +25,4 @@
 #define ERR_BUFFER_FULL (-16)
 
 #define SERVER_ACTIVE
-//#define CLIENT_ACTIVE
+#define CLIENT_ACTIVE
