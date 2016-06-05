@@ -64,7 +64,7 @@ String FTPClient::send(String &stringToWrite, String &remoteFile, TE_FTPClient_W
         client.println("USER "+username);       if(!readServerResponse()) return "Error when sending USER (credential username).";
         client.println("PASS "+password);       if(!readServerResponse()) return "Error when sening PASS (credential password).";
         client.println("SYST");                 if(!readServerResponse()) return "Error when sending SYST.";
-        client.println("Type I");               if(!readServerResponse()) return "Error when sending Type I.";
+        client.println("TYPE I");               if(!readServerResponse()) return "Error when sending Type I.";
         
         client.println("PASV");                 if(!readServerResponse()) return "Error when sending PASV.";
         
