@@ -93,7 +93,7 @@ class FTPServer{
 	
 public:
 	
-	FTPServer(String & user, String &pass, uint16_t _port = 21, int16_t _timeoutSec=-1 ); 
+	FTPServer(String & user, String &pass, uint16_t _port = 21, int16_t _timeoutSec=-1, const int chipSelectSdCard = A2 ); 
 	~FTPServer();
 	String run();
 	

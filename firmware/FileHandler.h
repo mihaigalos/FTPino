@@ -32,7 +32,7 @@ class IFileHandler; class FilePropeties;
 
 class FileHandlerFactory{
     public:
-    static IFileHandler* newFileHandler(TEFileSystem)  ; 
+    static IFileHandler* newFileHandler(TEFileSystem, const int chipSelect = A2)  ; 
 };
 
 //--------------------------- Specialization of the Printer to redirect certain SdFat streams to String and String to char* to output in streams --------------------------------
@@ -102,7 +102,7 @@ class SDCard_FileHandler: public IFileHandler{
     String cwd; String renameFromName;
     static void dateTime(uint16_t* date, uint16_t* time);
 public:  
-    SDCard_FileHandler(const int chipSelect = A2);
+    SDCard_FileHandler(const int chipSelect);
     String getDirList();
     int deleteTarget(String target, bool isDir);
     int changeDir(String destination);

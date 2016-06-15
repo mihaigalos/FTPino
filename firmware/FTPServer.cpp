@@ -56,7 +56,7 @@ unsigned char OutHelper::buffer [1024];
 inline void dbg(String param1, String param2) {}
 #endif
 
-FTPServer::FTPServer(String & user, String &pass,  uint16_t _port, int16_t _timeoutSec){
+FTPServer::FTPServer(String & user, String &pass,  uint16_t _port, int16_t _timeoutSec, const int chipSelectSdCard){
 	#if DEBUG > 0
     Serial.begin(9600);
     #endif
@@ -69,7 +69,7 @@ FTPServer::FTPServer(String & user, String &pass,  uint16_t _port, int16_t _time
 	#if -1 != BUZZER_PIN
 	Buzzer::init(D0);
 	#endif
-	fh = FileHandlerFactory::newFileHandler(static_cast<TEFileSystem>(FILESYSTEM));
+	fh = FileHandlerFactory::newFileHandler(static_cast<TEFileSystem>(FILESYSTEM), chipSelectSdCard);
 	if(_timeoutSec > 0) timeoutSec = _timeoutSec;
 	
 }

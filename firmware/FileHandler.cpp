@@ -25,11 +25,11 @@
 
 
 //--------------------------------------- Factory for different supported file types --------------------------------------------------------------
-IFileHandler* FileHandlerFactory::newFileHandler(TEFileSystem filesystem){
+IFileHandler* FileHandlerFactory::newFileHandler(TEFileSystem filesystem, const int chipSelect){
     IFileHandler* newFileHandler = NULL;  
     switch (filesystem){
         case TEFileSource_Eeprom:   newFileHandler = new Eeprom_FileHandler();  break;
-        case TEFileSource_SdCard:   newFileHandler = new SDCard_FileHandler();  break;
+        case TEFileSource_SdCard:   newFileHandler = new SDCard_FileHandler(chipSelect);  break;
         
         TEFileSource_Unknown:
         default:
