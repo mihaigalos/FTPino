@@ -50,7 +50,7 @@ My only explanation as to what is happening is that FileZilla writes to FTPino's
 read the whole file.. ?
 
 # Code requirements
-FTPino was tested only on Particle's Photon only. The linker output is presented below (server-only version, for client version flash usage is 1kB higher).
+FTPino was tested on Particle's Photon only. The linker output is presented below (server-only version, for client version flash usage is 1kB higher).
 ```
 Output of arm-none-eabi-size:
 
