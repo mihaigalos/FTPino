@@ -39,8 +39,6 @@ PC -> Write -> FTPino : 300 kB/s
 If you choose to interact with FTPino from a PC, I would reccomend using FTPRush FTP client (http://www.wftpserver.com/download.htm)
 Other clients I've used are FileZilla and FreeCommander, although with those, you can only read from the remote SDCard.
 
-PC clients interact with FTPino in FTP Active mode.
-
 In respect to FTPRush, you must configure your client to use a single socket for data. In v2.1.8 this can be found under Options -> Transfer -> Single connection mode (must be checked).
 
 I've had a bittersweet experience trying to validate FTPino with FileZilla. Most operations work if one respects the prerequisite of setting a single data socket. All except the Store command.
