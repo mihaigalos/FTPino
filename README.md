@@ -44,7 +44,7 @@ In respect to FTPRush, you must configure your client to use a single socket for
 I've had a bittersweet experience trying to validate FTPino with FileZilla. Most operations work if one respects the prerequisite of setting a single data socket. All except the Store command.
 This is responsible for sending data to FTPino for it to be written to the SD. 
 
-FTP Active mode just doesn't work. In Passive mode, the data is sent, received and written to the SD as you would expect. Except the last coouple of kB.
+FTP Active mode just doesn't work. In Passive mode, the data is sent, received and written to the SD as you would expect. Except the last couple of kB.
 
 My only explanation as to what is happening is that FileZilla writes to FTPino's buffer without checking if the buffer is full ? and closes the connection, before the client has had a chance to 
 read the whole file.. ?
