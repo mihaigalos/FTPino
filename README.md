@@ -2,14 +2,14 @@
 A tiny FTP Server and Client for your Photon / Arduino projects.
 ![alt tag](doc/FTPino_FTPServer.jpg?raw=true "FTPino")
 
-#Description
+# Description
 FTPino is a lightweight FTPServer and/or client for logging, storing or fetching your data.
 It is built on the Particle's Photon hardware and comes in two flavors:
 
-- SDCard Filesystem : based on SDFatLib's library, the filesystem is on a SD Card and I/O operations on files are performed on the card. 
+- SDCard Filesystem : based on SDFatLib's library, the filesystem is on a SD Card and I/O operations on files are performed on the card.
 - EEProm Filesystem : experimental, not yet fully functional. Support will be added for storing small files in the EEPROM, so the I/O operations on files will be made there.
 
-#Hardware
+# Hardware
 - Particle Photon (https://store.particle.io/)
 - Pololu SDCard (https://www.pololu.com/product/2597)
 - SDHC card (<32 GB or ==32GB, as long as it's SDHC and not SDXC). Make sure you format the card with the SDCard Formatter (https://www.sdcard.org/downloads/formatter_4/)
@@ -42,11 +42,11 @@ Other clients I've used are FileZilla and FreeCommander, although with those, yo
 In respect to FTPRush, you must configure your client to use a single socket for data. In v2.1.8 this can be found under Options -> Transfer -> Single connection mode (must be checked).
 
 I've had a bittersweet experience trying to validate FTPino with FileZilla. Most operations work if one respects the prerequisite of setting a single data socket. All except the Store command.
-This is responsible for sending data to FTPino for it to be written to the SD. 
+This is responsible for sending data to FTPino for it to be written to the SD.
 
 FTP Active mode just doesn't work. In Passive mode, the data is sent, received and written to the SD as you would expect. Except the last couple of kB.
 
-My only explanation as to what is happening is that FileZilla writes to FTPino's buffer without checking if the buffer is full ? and closes the connection, before the client has had a chance to 
+My only explanation as to what is happening is that FileZilla writes to FTPino's buffer without checking if the buffer is full ? and closes the connection, before the client has had a chance to
 read the whole file.. ?
 
 # Code requirements
