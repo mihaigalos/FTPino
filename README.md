@@ -35,7 +35,7 @@ PC <- Read  <- FTPino : 500 kB/s
 PC -> Write -> FTPino : 300 kB/s
 ```
 
-#FTP Client (PC)
+# FTP Client (PC)
 If you choose to interact with FTPino from a PC, I would reccomend using FTPRush FTP client (http://www.wftpserver.com/download.htm)
 Other clients I've used are FileZilla and FreeCommander, although with those, you can only read from the remote SDCard.
 
