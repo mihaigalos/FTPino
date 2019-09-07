@@ -29,7 +29,7 @@ My proposed solution consists of soldering the GND of the next pin and cutting i
 As for the VDD, an airwire was needed.
 ![alt tag](doc/FTPino_SDHolder2.jpg?raw=true "FTPino_SDHolder2")
 
-#Speed
+# Speed
 ```
 PC <- Read  <- FTPino : 500 kB/s
 PC -> Write -> FTPino : 300 kB/s
